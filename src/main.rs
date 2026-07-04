@@ -94,6 +94,14 @@ fn write_obj(summary: &PlanetSummary, path: &std::path::Path, width: usize) -> s
     std::fs::write(path, out)
 }
 
+fn resolve_output_path(args: &[String]) -> String {
+    args.iter()
+        .position(|arg| arg == "--output")
+        .and_then(|index| args.get(index + 1))
+        .cloned()
+        .unwrap_or_else(|| "planet.obj".to_string())
+}
+
 fn generate_planet(seed: u64, cell_count: u32) -> PlanetSummary {
     let ocean_ratio = ((seed % 37) + 20) as u32;
     let mountain_ratio = ((seed % 23) + 10) as u32;
@@ -193,6 +201,12 @@ mod tests {
         assert!(content.contains("f "));
         let _ = std::fs::remove_file(path);
     }
+
+    #[test]
+    fn output_path_defaults_to_planet_obj() {
+        let args = vec!["--seed".to_string(), "7".to_string()];
+        assert_eq!(resolve_output_path(&args), "planet.obj");
+    }
 }
 
 fn main() {
@@ -212,6 +226,7 @@ fn main() {
 
     let seed_value = seed.parse::<u64>().unwrap_or(0);
     let cell_value = cell_count.parse::<u32>().unwrap_or(1024);
+    let output_path = resolve_output_path(&args);
     let summary = generate_planet(seed_value, cell_value);
 
     println!("Planets Craft — Beta — seed {}", summary.seed);
@@ -225,7 +240,7 @@ fn main() {
     println!("Heightmap preview:");
     println!("{}", render_heightmap(&summary, 32));
 
-    let obj_path = std::path::Path::new("planet.obj");
+    let obj_path = std::path::Path::new(&output_path);
     if let Err(err) = write_obj(&summary, obj_path, 32) {
         eprintln!("Failed to write OBJ preview: {err}");
     } else {

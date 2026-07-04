@@ -1,6 +1,23 @@
 name: Rust
 
 on:
+  workflow_dispatch:
+    inputs:
+      seed:
+        description: Seed for the planet generator
+        required: true
+        type: number
+        default: 42
+      cells:
+        description: Cell count for the planet generator
+        required: true
+        type: number
+        default: 1024
+      output_name:
+        description: Output mesh file name
+        required: false
+        type: string
+        default: planet.obj
   push:
     branches: [ "main" ]
   pull_request:
@@ -8,6 +25,9 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  DEFAULT_SEED: 42
+  DEFAULT_CELLS: 1024
+  DEFAULT_OUTPUT_NAME: planet.obj
 
 jobs:
   build:
@@ -16,17 +36,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build
-        run: cargo build --verbose
-
-      - name: Run tests
-        run: cargo test --verbose
-
       - name: Set up Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          profile: minimal
+        uses: dtolnay/rust-toolchain@stable
 
       - name: Cache cargo
         uses: actions/cache@v4
@@ -36,14 +47,36 @@ jobs:
             ~/.cargo/git
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
+      - name: Build
+        run: cargo build --verbose
+
+      - name: Run tests
+        run: cargo test --verbose
+
       - name: Build (release)
         run: cargo build --manifest-path Cargo.toml --release
 
       - name: Run executable
-        run: ./target/release/plancarft_beta --seed 42
+        run: ./target/release/plancarft_beta --seed "${{ inputs.seed || env.DEFAULT_SEED }}" --cells "${{ inputs.cells || env.DEFAULT_CELLS }}" --output "${{ inputs.output_name || env.DEFAULT_OUTPUT_NAME }}"
 
-      - name: Upload artifact
+      - name: Export mesh object
+        run: |
+          output_name="${{ inputs.output_name || env.DEFAULT_OUTPUT_NAME }}"
+          if [ ! -f "$output_name" ]; then
+            echo "Expected output file $output_name was not produced."
+            exit 1
+          fi
+          echo "Generated object: $output_name"
+
+      - name: Upload binary artifact
         uses: actions/upload-artifact@v4
         with:
           name: plancarft_beta-linux
           path: target/release/plancarft_beta
+
+      - name: Upload object artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: planet-obj
+          path: ${{ inputs.output_name || env.DEFAULT_OUTPUT_NAME }}
+          if-no-files-found: error
