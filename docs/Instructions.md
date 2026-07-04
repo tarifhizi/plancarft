@@ -1,8 +1,12 @@
+---
+title: Instructions
+---
+
 🌍 Procedural Worldbuilding Engine
 
 Mobile — Optimized Hex — Sphere Planet Generator
 
-A complete, detailed description of a performance — oriented world generation pipeline designed for mobile devices, using an icosahedron → subdivision → hex — sphere approach as the foundation for tectonics, elevation, climate, biomes, and hydrology.
+A complete, detailed description of a performance —oriented world generation pipeline designed for mobile devices, using an icosahedron → subdivision → hex — sphere approach as the[...]
 
 Table of contents
 
@@ -108,9 +112,9 @@ Combine a few Lloyd iterations with advanced smoothing or optimization for best 
 
 While some iteration is usually needed, these methods significantly reduce the total iterations compared to naive Lloyd relaxation, improving performance without sacrificing mesh quality.
 
-Best practice: Some iteration is generally unavoidable, but hybrid approaches that mix a small number of Lloyd iterations with more advanced smoothing or optimization techniques provide the best balance between mesh quality and performance.
+Best practice: Some iteration is generally unavoidable, but hybrid approaches that mix a small number of Lloyd iterations with more advanced smoothing or optimization techniques provide the best [...]
 
-If you want to explore or implement specific optimization techniques tailored to your engine, consider starting with Laplacian smoothing constrained to the sphere or CVT optimization methods, which are widely used and well-supported in mesh processing libraries.
+If you want to explore or implement specific optimization techniques tailored to your engine, consider starting with Laplacian smoothing constrained to the sphere or CVT optimization methods, whi[...]
 
 Dual mesh → Hex sphere
 
@@ -187,7 +191,7 @@ Small scale → hills and terrain detail.
 
 Mountains
 
-Mountains are primarily generated near convergent plate boundaries during tectonic simulation, forming the base elevation. This base is then refined by mid-scale noise layers to create realistic mountain profiles.
+Mountains are primarily generated near convergent plate boundaries during tectonic simulation, forming the base elevation. This base is then refined by mid-scale noise layers to create realistic [...]
 
 Additional techniques for mountain shaping include:
 
