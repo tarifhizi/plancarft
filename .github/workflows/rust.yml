@@ -37,7 +37,7 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Build (release)
-        run: cargo build --manifest-path beta/Cargo.toml --release
+        run: cargo build --manifest-path Cargo.toml --release
 
       - name: Run executable
         run: ./target/release/plancarft_beta --seed 42
